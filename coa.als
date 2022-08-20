@@ -184,7 +184,7 @@ pred show {
       simpleMatrix[U] and JacobiStep[u, v] and JacobiStep[U, V]
 }
 
-run show for 2 Coarray, 14 Matrix, 10 Value
+run show for 2 Coarray, 7 Matrix, 4 Value
 
 /** Assertions **/
 

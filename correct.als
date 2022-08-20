@@ -28,8 +28,7 @@ fact invariants {
 
 -- keep sizes small and avoid empty matrix
 fact sizes {
-  all m: Matrix| m.cols <= 10 and m.rows <= 4 /** 5 Int **/
-  --all m: Matrix| m.cols <= 7 and m.rows <= 4  /** 4 Int **/
+  all m: Matrix| m.cols <= 10 and m.rows <= 4 
   all m: Matrix| m.cols > 0 and m.rows > 0
 }
 
@@ -83,7 +82,7 @@ sig P {
 	abs: lone Matrix }
 
 check Correspondence { all p:P | alpha[p.con,p.abs] => some p.abs} for
-	1 Coarray, 7 Matrix, 10 Value, 1 P, 5 seq, 0 P2, 5 Int
+	1 Coarray, 7 Matrix, 10 Value, 1 P, 5 seq, 0 P2, 4 Int
 -- 4 Int :passes ~ 20 seconds on m1 mac mini w/ minisat
 -- 5 Int :passes ~ 8 minutes on m1 mac mini w/ minisat
 
@@ -91,26 +90,16 @@ check Correspondence { all p:P | alpha[p.con,p.abs] => some p.abs} for
 ------------------- is alpha[abs] -> con total? 
 --------------------aka Adequacy from De Roever
 
-fun rel[a:Matrix]: set Coarray {
-	{ c: Coarray | alpha[c,a] }
-}
-
-sig P2 {
-	con: set Coarray, -- a set of Coarrays?
-	abs: Matrix }{abs.cols>=3}
-
-check adequacy { all p:P2 | alpha[p.con,p.abs] =>  #p.con >= #rel[P.abs] } for
-	3 Coarray, 7 Matrix, 10 Value, 5 seq, 1 P2, 0 P 
-/*
 sig P2 {
 	con: lone Coarray,
 	abs: Matrix }{
     some con => #con.mseq>1} // not interested in base case w/ 1 Image
 
 check adequacy { all p:P2 | alpha[p.con,p.abs] =>  some p.con} for
-	3 Coarray, 7 Matrix, 10 Value, 5 seq, 1 P2, 0 P  */
+	3 Coarray, 7 Matrix, 10 Value, 5 seq, 1 P2, 0 P, 4 Int
 
--- 4 Int: passes ~ 54 seconds on m1 macbook pro w/ minisat
+-- 4 Int: passes ~ 54 seconds on m1 mac mini w/ minisat
+
 
 -------------------------------------------------
 ------------------- correctness
@@ -121,7 +110,7 @@ check correctness { all c,c":Coarray, a,a":Matrix |
 	2 Coarray, 14 Matrix, 4 Value, 0 P, 0 P2, 4 Int
 
 -- Only passes if we restrict the Coarray size otherwise overflow issues
--- With 4 Int: ~ 2.5 minutes on m1 macbook pro w/ minisat
+-- With 4 Int: ~ 40 seconds on m1 mac mini w/ minisat
 
 
 check correctness2 { all c,c":Coarray, a,a":Matrix |
@@ -129,8 +118,7 @@ check correctness2 { all c,c":Coarray, a,a":Matrix |
 					and small2[c] and small2[c"]) => JacobiStep[a,a"] } for
 	2 Coarray, 14 Matrix, 4 Value, 0 P, 0 P2, 5 Int
 
--- With 5 Int: passes ~ 45 minutes on m1 macbook pro w/ minisat
--- have not seen terminate yet
+-- With 5 Int: passes ~ 45 minutes on m1 mac min w/ minisat
 
 run correctness3 { some c,c":Coarray, a,a":Matrix |
 					alpha[c,a] and alpha[c",a"] and JacobiStep[c,c"]
@@ -138,7 +126,8 @@ run correctness3 { some c,c":Coarray, a,a":Matrix |
 } for 2 Coarray, 14 Matrix, 4 Value, 0 P, 0 P2
 
 -- This passes even without restricting the coarray ( no instances)
--- 4 Int : ~ 7 minutes on m1 mac mini w/ minisat
+-- 4 Int : ~ 40 seconds on m1 mac mini w/ minisat
+
 
 /*
 default scope is 3 (except for integers, which have a default bitwidth of 4)
